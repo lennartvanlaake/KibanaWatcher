@@ -1,3 +1,7 @@
+import org.elasticsearch.client.Response;
+
+import static javax.swing.text.html.HTML.Tag.HEAD;
+import com.unboundid.util.json.JSONException;
 
 import java.io.BufferedReader;
 import org.apache.http.HttpEntity;
@@ -9,7 +13,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.nio.entity.NStringEntity;
-import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import java.io.IOException;
@@ -20,9 +23,10 @@ import java.util.Map;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
-public class RESTapi {
-
-    public static void main(String[] Args) throws IOException {
+public class RESTapi
+{
+    public static void main(String[] Args) throws IOException, JSONException
+    {
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY,
                 new UsernamePasswordCredentials("Eric", "password"));
@@ -36,6 +40,7 @@ public class RESTapi {
                 });
 
         RestClient restClient = builder.build();
+
         String endpointWatcher = "/_xpack/watcher/watch/";
 
         Map<String, String> params = Collections.emptyMap();
@@ -88,6 +93,13 @@ public class RESTapi {
                 + "  }\n"
                 + "}";
 
+        //Response response = restClient.performRequest("GET", "/.watches/_search");
+        //Response response = restClient.performRequest("PUT", endpointWatcher+"my-watch",params, entity);
+        //Response response = restClient.performRequest("GET",endpointWatcher+"my-watch");
+
+
+        //JSONObject myObject = new JSONObject(json);
+
         Response getRequest = restClient.performRequest("GET", endpointWatcher + "my-watch");
         // get the data from the watcher
         JSONObject myobject = new JSONObject(EntityUtils.toString(getRequest.getEntity()));
@@ -117,6 +129,10 @@ public class RESTapi {
         Response response = restClient.performRequest("PUT", endpoint, params, entity);
         System.out.println("The response received was: " + EntityUtils.toString(response.getEntity()));
 
+        System.out.println();
+        //System.out.println(myObject.getField());
+
+        restClient.close();
     }
     
     public static void setInterval(JSONObject JSON, String interval) {
